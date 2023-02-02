@@ -9,11 +9,12 @@ function funcOpen()
 {
     var a = document.querySelector("#openItem");
     alert(a);
+    
 }
 
 function funcClose()
 {
-
+    커밋되는지 확인해보자;
 }
 
 var strName         = prompt("이름 입력");
