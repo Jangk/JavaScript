@@ -14,12 +14,17 @@ function funcOpen()
 
 function funcClose()
 {
-    커밋되는지 확인해보자;
 }
 
+
+let gameobject = {
+    name: "gg",
+    other : "몰루"
+}
 var strName         = prompt("이름 입력");
 var dateNowDate     = new Date();               
 var strDateDisplay  = dateNowDate.toLocaleTimeString();
+Math.floor(Math.random());
 document.write("<big>" + strName + "님이 "+ strDateDisplay + "에 입장하셨습니다.");
 
 ``
