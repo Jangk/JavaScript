@@ -23,6 +23,7 @@ const promise1 = new Promise((resolve, reject) => {
 const iFlag = true;
 // async 함수는 promise를 리턴함
 // promise객체가 아닌값을 리턴할땐 promise 객체로 변환해서 반환함.
+// resolvoe, reject를 쓰지않음.
 async function asyncFunc()
 {
   if(iFlag)
@@ -41,3 +42,18 @@ promise2.then((value)=>{
 .finally(
   console.log("Finally")
 )
+
+
+// await를 이용한 대기 ?
+async function f() {
+
+  let promise = new Promise((resolve, reject) => {
+    setTimeout(() => resolve("완료!"), 1000)
+  });
+
+  let result = await promise; // 프라미스가 이행될 때까지 기다림 (*)
+
+  alert(result); // "완료!"
+}
+
+f();
