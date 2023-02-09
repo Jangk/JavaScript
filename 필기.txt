@@ -49,7 +49,8 @@ html
 
 
       var 호이스팅  : 자바 스크립트에선 var선언이 사용되는 곳보다 밑에 있어도 사용할 수 있는데 
-                     그걸 호이스팅이라고함.(끌어올려 사용 ?)  다른 변수는 호이스팅 불가능.
+                     그걸 호이스팅이라고함.(끌어올려 사용 ?)
+                      * var는 초기화 전에 사용시 undefine이지만, let이나 const는 에러.
       var          : 지역 변수. 특이하게 재선언할 수 있다. 마지막에 선언한 수로 덮어씌움
                      ex) var a =1 ; var a= 5;
       let 변수명;   : {}범위를 벗어날수 없게하는 예약어(var의 단점보완용으로 나옴)
@@ -63,53 +64,169 @@ html
                             age : 30
                           }
                           let number = [1+5];        // 식을 넣을 수 있음 . 결과값은 6
-  
-  
+
+
+구조 분해 할당
+    - 배열이나 객체의 속성을 분해해서 그 값을 변수에 담을 수있게하는 표현식.
+      ex) let [x, y] = [1, 2];                               // x와 y에 1과 2를 분해 할당함.
+
+      ex) let users = ["a","b","c"];
+          let [user1, user2, user3] = users;                 // 이런식으로 배열에도 할당가능.  
+      
+      ex) let [user1, user2, user3] = users;                 // user3에는 undefine이 들어감.  
+
+      ex) let [user1,, user2] = ["a","b","c"];               // 공백을 통해 특정 값을 무시할수 있음.
+          * user1 =="a", user2 =="c"    
+
+      ex)   [a,b] = [b,a];                                   // swap함수 기능을 분해할당으로 바로 할수 잇음.
+
+
+나머지 매개변수 / 전개 구문
+    arguments                                                // 함수내에서 사용가능한 매개변수. (모든 함수 인자를 포함 ?)
+                                                                * 배열의 형태라 인덱스와 length는 사용할 수 있으나
+                                                                  배열 메서드는 사용불가능.
+    ex) function showname(nameObject){
+        console.log(arguments.length)                        // 매개 변수로 인식해서 사용 ?
+        console.log(arguments[0]);                           // 매개변수의 인덱스를 사용해서 사용가능.
+        console.log(argumnets[1]);
+        }
+    
+    funciton funcName(...나머지 매개변수 명);                 // 함수 인자 갯수가 정해지지않은 경우에 사용.
+                                                                * 배열 또는 여러개의 변수를 배열로 만들어 사용.
+                                                                * 항상 함수 인자의 맨 마지막에 있어야됌.
+                                                                * arguments와 달리 배열의 메소드를 사용가능.
+                                                                * 함수인자에 아무것도 없으면 빈 배열로 작동.
+
+    ex) function add(...numbers){                            // 나머지 매개변수로 함수 인자를 받음
+        let result = 0;
+        numbers.forEach((num)=>((result+=num));              // 나머지 매개변수로 함수 메서드 사용해서 총합을 구함.
+        }
+
+    ex) let arr1 = [1,2,3];
+        let arr2 = [4,5,6];
+        let arrAll = [...arr1, ...arr2];                     // 나머지 매개변수로 두 배열을 합치기도 가능하다.
+        * arrAll == [1,2,3,4,5,6];                              * 그냥 두배열을 넣으면 두 배열을 각각 인덱스로 가진
+                                                                  새로운 배열이 됌.
+
+클로저
+     - 함수가 생성될 때 외부 변수(함수 생성 시점 참조가 가능한 변수 ex)전역변수)를 기억하고 함수가 접근가능한 것.
+
+
+Call, Apply, Bind
+    함수명.call(this로 사용될 값, 함수 인자);                   // 모든 함수에서 사용할 수 있고, this를 특정값으로 
+                                                                정할 수 있다. (this == 함수인자)
+                                                                * 함수인자는 생략 가능.
+    함수명.apply(this로 사용될 값, 배열 함수  인자);            // call과 동일하지만 매개변수만 배열로 받음.
+    함수명.Bind(this로 사용될 값);                             // 함수명의 this가 this로 사용될값으로 고정이되고
+                                                                 this가 고정된 함수로 반환함.
+
+
+상속, prototype
+    변수명.__proto__ = 상속할 객체;                             // 부모를 설정함. 부모의 함수와 변수에 접근할 수 있으나,
+                                                                  Object.Keys, Object.Values같은 객체 데이터를 전부 
+                                                                  반환하는 경우에는 자식(본인)의 데이터만 반환함.
+    객체타입.prototype.변수명 = 넣을값;                          // 객체타입 프로토타입(부모)에 변수명의 변수를 추가해 값을 넣음
+    ex) Bmw.prototype.wheels = 4;                              // Bmw라는 객체에 wheels라는 변수를 프로토로 추가하고
+        Bmw.prototype.drive = func(){                             4라는 값을 생성자로 넣음.
+          console.log("drive");
+        }
+
+    변수명.constructor                                          // 생성자를 호출한 객체를 불러옴.
+    ex) Bmw.prototype = {                                       // 위와 결과는 동일하지만 생성자를 호출하지않는다.
+          constructor : Bmw,                                    // 강제로 Bmw의 생성자를 설정함.
+          wheels = 4;
+          drive(){
+            console.log("drive");
+          },
+        }
+
+    변수명.hasOwnProperty(객체명);                              // 객체가 가지 있는 데이터만 true 반환
+
+Class
+    class 객체타입{멤버 변수 및 메소드}                         // 클래스 내에 정의한 메소드들은  객체타입의 프로토타입에 저장됨
+                                                                  일반 객체는 new 없이 생성해도 에러가 안나지만
+                                                                  class 객체는 new 없이 생성시 에러발생.
+    ex) const normalObj = function(){};
+        class classObj{}
+        const obj1 = normalObj;                               // 생성이 아니고 객체 타입이 반환되기떄문에 undefined
+        const obj2 = classObj;                                // 에러가 발생
+    constructor(매개변수){내부 구현}                            // new로 통해 생성하면 매개변수로 생성자를 처리함.
+                                                                  이 내용은 프로토타입(class 선언안에 잇어야댐)
+                                                                  * 상속을 받은 자식 클래스의 생성자라면, constructor안에
+                                                                    Super();를 이용해 부모 클래스의 생성자를 호출해야 한다.
+    super(함수인자);                                           // 부모의 생성자를 호출.
+    *** constructor를 정의하지 않았을 시엔 자동으로 부모와 자식 기본 생성자를 생성해서 처리함.
+    class 클래스명 extends 상속할 클래스명 {멤버 변수 및 메소드}  // 클래스에서 상속은 prototype이 아니라 extends로 상속함.
+    super.함수명();                                            // 부모의 함수와 같은 함수명을 쓰지만, 오버라이딩하지 않을떄 사용
+                                                                  * class에서 부모의 함수와 같은 이름의 함수를 쓰면 함수를 덮어씀.
+
+
+Generator
+    function* 함수명(){}                                         // 함수 실행을 멈출 수 있는 함수(제너레이터)
+    yield 값;                                                    // 제너레이터 변수안에서만 사용가능하고 yield는 
+                                                                   함수를 정지 시킴.
+    yield* 제네레이터함수();                                      // yield* 뒤에 제너레이터함수명이 있으면 
+                                                                    제너레이터 함수를 실행
+    제너레이터함수명.next(전달할값);                               // 다음 yield를 만날떄까지 함수를 작동시킴.
+                                                                    * 만난 yield값과, 함수실행이 끝났는지를 
+                                                                      boolean으로 리턴함.
+                                                                    * 전달할 값을 넣으면 yield에 전달할 값이 대입됨.
+    ex) function* fn(){
+          const num1 = yield "첫번째 값을 입력";                  // fn.next(전달할값)을 하면 yield에 전달할값이 대입되
+          console.log(num1);                                        num1 = 전달할값이 됨
+        }  
+    제너레이터함수명.return("입력값");                            // 입력값과 true를 리턴함 (함수 실행을 끝냄)
+    제너레이터함수명.throw("입력값");                             // throw catch문과 동일.
+    배열명[Symbol.iterator]();                                   // 배열명의 iterator를 리턴함.
+                                                                   * 배열명.netx()같은 키워드들도 전부 이터레이터로 하는것.
+                                                                   * 위의 제너레이터함수들도 해당함.
+    for(변수 선언 of 순환할 객체명){기능}                         // 이터레이터는 for of로 순회가능.
+
 객체 
-   Object.assign({초기값}, 복사할 객체명);                     // 객체명1 = 객체명2은 얕은 복사가 되기 때문에, 
-                                                                          깊은 복사된 객체를 반환.
-                                                                * 초기값을 {}하면 전부 복사가되고, 초기값에 값을 넣으면
-                                                                  넣은 초기값 + 복사할 객체의 값이 전부 포함된 객체가 반환됨.
-                                                                * 객체의 키값이 같다면 덮어씀.
-                                                                * 복사할 객체를 여러개 할 수도 있음.
-                                                                  ex) Object.assign({}, 객체1, 객체2);
-                                                                      - 3개다 합해진 객체를 리턴함.
-  Object.Keys(객체명);                                        // 객체의 키값들을 문자열 배열로 만들어 반환함.  
-  Object.Values(객체명);                                      // 객체의 값들을   문자열 배열로 만들어 반환함. 
-  Object.entries(객체명);                                     // 객체의 키와 값들을 각각의 배열로 가진 배열로 반환. 
-                                                                ex) let arr = [
-                                                                    [mon, "월"],        // 키, 값
-                                                                    [tue, "화"]
-                                                                ]
-                                                                const result = Object.entries(arr);   // 배열도 객체.
-                                                                결과 == result[0] ==["mon", "tue"];   // 키만 배열
-                                                                        result[1] == ["월", "화"];     // 값만 배열
-  Object.fromEntries(객체명);                                 // 객체의 키와 값을 묶은 배열을 가진 배열로 반환.
-                                                                ex) let arr = [
-                                                                    [mon, "월"],        // 키, 값
-                                                                    [tue, "화"]
-                                                                ]
-                                                                const result = Object.fromEntries(arr); // 배열도 객체.
-                                                                결과 == result[0] == ["mon", "월"];     // 키값 배열 1
-                                                                        result[1] == ["tue", "화"];     // 값값 배열2
-  Symbol("id");                                               // 코드에 단하나의 유일한 식별자로 사용할때 씀.
-                                                                 id 값은 생략가능하고 키값을 심볼로 사용시 
-                                                                 keys, valuses, entries 메소드에서는 인식하지않고,
-                                                                 for in 구문도 인식하지않음.
-                                                                 * 특정 객체에 원본을 건드리지않고 속성을 추가할 때 사용.
-                                                                 ex) let a = symbol();
-                                                                     let b = symbol();
-                                                                      * a !== b    같은 심볼이지만 다른 값으로 인식.
-  Symbol.for("id");                                           // 하나의 심볼만 보장받음. (없으면 생성, 있으면 심볼을 가져옴)
-                                                                 * 전역 심볼 
-                                                                 ex) let a = symbol.for("id");
-                                                                     let b = symbol.for("id");
-                                                                      * a === b    심볼이랑 달리 같은값으로 인식.
-  Symbol.keyFor(전역심볼변수명);                                // 해당 전역 심볼의 설정한 ID값을 가져옴.
-                                                                 * 전역 심볼만 값을 가져올 수 있음.
-  일반심볼변수명.description;                                   // 그냥 심볼의 설정한 ID값 을 가져옴.
-  Object.getOwnPropertySymbols(객체명);                        // 객체 내에 있는 심볼을 가져옴.
-  Reflect.ownKeys(객체명);                                     // 객체에 있는 심볼 키값을 포함한 모든 키값을 반환함.
+    Object.assign({초기값}, 복사할 객체명);                    // 객체명1 = 객체명2은 얕은 복사가 되기 때문에, 
+                                                                           깊은 복사된 객체를 반환.
+                                                                 * 초기값을 {}하면 전부 복사가되고, 초기값에 값을 넣으면
+                                                                   넣은 초기값 + 복사할 객체의 값이 전부 포함된 객체가 반환됨.
+                                                                 * 객체의 키값이 같다면 덮어씀.
+                                                                 * 복사할 객체를 여러개 할 수도 있음.
+                                                                   ex) Object.assign({}, 객체1, 객체2);
+                                                                       - 3개다 합해진 객체를 리턴함.
+    Object.Keys(객체명);                                       // 객체의 키값들을 문자열 배열로 만들어 반환함.  
+    Object.Values(객체명);                                     // 객체의 값들을   문자열 배열로 만들어 반환함. 
+    Object.entries(객체명);                                    // 객체의 키와 값들을 각각의 배열로 가진 배열로 반환. 
+                                                                 ex) let arr = [
+                                                                     [mon, "월"],        // 키, 값
+                                                                     [tue, "화"]
+                                                                 ]
+                                                                 const result = Object.entries(arr);   // 배열도 객체.
+                                                                 결과 == result[0] ==["mon", "tue"];   // 키만 배열
+                                                                         result[1] == ["월", "화"];     // 값만 배열
+    Object.fromEntries(객체명);                                // 객체의 키와 값을 묶은 배열을 가진 배열로 반환.
+                                                                 ex) let arr = [
+                                                                     [mon, "월"],        // 키, 값
+                                                                     [tue, "화"]
+                                                                 ]
+                                                                 const result = Object.fromEntries(arr); // 배열도 객체.
+                                                                 결과 == result[0] == ["mon", "월"];     // 키값 배열 1
+                                                                         result[1] == ["tue", "화"];     // 값값 배열2
+    Symbol("id");                                              // 코드에 단하나의 유일한 식별자로 사용할때 씀.
+                                                                  id 값은 생략가능하고 키값을 심볼로 사용시 
+                                                                  keys, valuses, entries 메소드에서는 인식하지않고,
+                                                                  for in 구문도 인식하지않음.
+                                                                  * 특정 객체에 원본을 건드리지않고 속성을 추가할 때 사용.
+                                                                  ex) let a = symbol();
+                                                                      let b = symbol();
+                                                                       * a !== b    같은 심볼이지만 다른 값으로 인식.
+    Symbol.for("id");                                          // 하나의 심볼만 보장받음. (없으면 생성, 있으면 심볼을 가져옴)
+                                                                  * 전역 심볼 
+                                                                  ex) let a = symbol.for("id");
+                                                                      let b = symbol.for("id");
+                                                                       * a === b    심볼이랑 달리 같은값으로 인식.
+    Symbol.keyFor(전역심볼변수명);                               // 해당 전역 심볼의 설정한 ID값을 가져옴.
+                                                                  * 전역 심볼만 값을 가져올 수 있음.
+    일반심볼변수명.description;                                  // 그냥 심볼의 설정한 ID값 을 가져옴.
+    Object.getOwnPropertySymbols(객체명);                       // 객체 내에 있는 심볼을 가져옴.
+    Reflect.ownKeys(객체명);                                    // 객체에 있는 심볼 키값을 포함한 모든 키값을 반환함.
 
                                                                 
 연산자
@@ -134,10 +251,14 @@ html
     
     
     typeof 변수명;                                           // 해당 자료형을 조회하는 방법
-    console.log("내용");                                    // 콘솔에 글을 띄움(웹에는 출력안됨)
-    prompt("질문","기본 입력 값");                           // 내용과 함께 입력창이 뜨고, 입력된 값을 문자열로 리턴함.  
-                                                               2번째 함수 인자는 생략 가능하고, 
-                                                               입력 창에 기본 입력값이 설정되 있음(수정가능);
+    console.log("내용");                                     // 콘솔에 글을 띄움(웹에는 출력안됨)
+    setTimeout(실행할 함수, 딜레이될ms시간, 함수인자);         // 함수를 딜레이된 시간 만큼뒤에 실행시킴(콜백함수)
+                                                               실행할 함수에 함수인자를 넣음. (함수인자 생략 가능)
+                                                               타임아이디 값을 반환함.
+                                                               * 1000ms = 1초
+    setInterval(실행할 함수, 딜레이될ms시간, 함수인자);        // 반환값이랑 인자는 setTimeout과 동일하지만,
+                                                               딜레이될 시간마다 함수를 계속 반복해서 실행함.
+    clearTimeout(타임아이디명);                               // 실행중인 타임아이디에 해당하는 스케쥴을 취소시킴.
 
 
 숫자 관련
@@ -226,7 +347,10 @@ html
     
 
 
-
+HTML 자바스크립트 함수 ?
+    prompt("질문","기본 입력 값");                           // 내용과 함께 입력창이 뜨고, 입력된 값을 문자열로 리턴함.  
+                                                               2번째 함수 인자는 생략 가능하고, 
+                                                               입력 창에 기본 입력값이 설정되 있음(수정가능);
     document.write("<b><big>"+변수명);                      // 화면에 출력함    
                                                             * <b>   볼드(굵은 글씨체)
                                                             * <big> 큰 글씨
