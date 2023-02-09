@@ -2,6 +2,7 @@
 자바스크립트에서 실행시 luanch.js 생성되는데 이게 있으면 로컬 호스트 연결이 안됨.
 
 
+
 기본 디폴트
   <!DOCTYPE html>                                                                 // 이 문서가 html이라는 것을 알림
   <html lang="ko">                                                                // 언어 ko로 설정
